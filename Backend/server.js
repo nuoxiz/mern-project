@@ -13,6 +13,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/goals", require("./routes/goalRoutes")); // when the user hit the /api/goals, it will look into the goalRoutes file. Therefore, only need to specify the path as "/" in router.get()
 
+app.use("/api/users", require("./routes/userRoutes"));
 app.use(errorHandler); // override the default Express error handler
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
