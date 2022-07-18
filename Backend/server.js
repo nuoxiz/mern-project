@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const colors = require("colors");
 const dotenv = require("dotenv").config(); //allow us to have a .env file with variables in it.
@@ -14,6 +15,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/goals", require("./routes/goalRoutes")); // when the user hit the /api/goals, it will look into the goalRoutes file. Therefore, only need to specify the path as "/" in router.get()
 
 app.use("/api/users", require("./routes/userRoutes"));
+
+// Serve frontend
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/build")));
+  // "*" means any route aside from our api routes
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, "../", "frontend", "build", "inded.html")
+    )
+  );
+} else {
+  app.get("/", (req, res) => res.send("Please set to production"));
+}
+
 app.use(errorHandler); // override the default Express error handler
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

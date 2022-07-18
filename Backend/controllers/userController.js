@@ -72,8 +72,10 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access Private
 const getMe = asyncHandler(async (req, res) => {
   // should have access because we have set req.user in the middleware
-  const { _id, name, email } = await User.findById(req.user.id);
-  res.status(200).json({ id:_id, name, email });
+  // const { _id, name, email } = await User.findById(req.user.id);
+
+  // we already got the user inside protect() in authMiddleware.js which is called in the routes folder
+  res.status(200).json(req.user);
 });
 
 // Generate JWT

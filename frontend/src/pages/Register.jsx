@@ -1,6 +1,12 @@
 // import e from "express";
+// import { restart } from "nodemon";
 import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -11,15 +17,48 @@ const Register = () => {
   // Deconstruct the field from that
   const { name, email, password, password2 } = formData;
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Select the auth state defined in authSlice.js
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+  /**
+   * The code inside the brackets is going to execute if any of the state in the monitoring list changes
+   * AND  reset state.auth no matter whether the registration is successful or failled
+   */
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    // if fulfilled or if logged in, then navigate to the dashboard
+    if (isSuccess || user) {
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
+    if (password !== password2) {
+      toast.error("Password do not match");
+    } else {
+      const userData = { name, email, password };
+      dispatch(register(userData));
+    }
   };
+  if (isLoading) {
+    return Spinner;
+  }
   return (
     <>
       <section className="heading">

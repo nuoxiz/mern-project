@@ -40,14 +40,14 @@ const updateGoal = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Goal not found");
   }
-  const user = await User.findById(req.user.id);
+  // const user = await User.findById(req.user.id);
   //Check for user
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error("User not found");
   }
   //Comparing the user field (which is an ObjectId) in the goal we got with the user id what is in the JWT (req.user.id) this is done to ensure that a user can only delete goals that are associating with it
-  if (goal.user.toString() !== user.id) {
+  if (goal.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
   }
@@ -66,14 +66,14 @@ const deleteGoal = asyncHandler(async (req, res) => {
   if (!goal) {
     throw new Error("Goal not found"); // Express.js have a default error handler which return a HTML page by default. We created errorMiddleware.js to override the default error handler and return the error message in the format we specified
   }
-  const user = await User.findById(req.user.id);
+  // const user = await User.findById(req.user.id);
   //Check for user
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error("User not found");
   }
   //Comparing the user field (which is an ObjectId) in the goal we got with the user id what is in the JWT (req.user.id) this is done to ensure that a user can only delete goals that are associating with it
-  if (goal.user.toString() !== user.id) {
+  if (goal.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
   }
